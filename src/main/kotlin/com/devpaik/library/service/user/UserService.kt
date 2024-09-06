@@ -2,10 +2,8 @@ package com.devpaik.library.service.user
 
 import com.devpaik.library.domain.user.User
 import com.devpaik.library.domain.user.UserRepository
-import com.devpaik.library.domain.user.loanhistory.UserLoanStatus
 import com.devpaik.library.dto.user.request.UserCreateRequest
 import com.devpaik.library.dto.user.request.UserUpdateRequest
-import com.devpaik.library.dto.user.response.BookHistoryResponse
 import com.devpaik.library.dto.user.response.UserLoanHistoryResponse
 import com.devpaik.library.dto.user.response.UserResponse
 import com.devpaik.library.utils.fail
@@ -15,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 class UserService (
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
 ) {
 
     @Transactional

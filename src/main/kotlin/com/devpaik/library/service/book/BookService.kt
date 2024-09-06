@@ -1,9 +1,10 @@
 package com.devpaik.library.service.book
 
 import com.devpaik.library.domain.book.Book
+import com.devpaik.library.domain.book.BookQueryDSLRepository
 import com.devpaik.library.domain.book.BookRepository
 import com.devpaik.library.domain.user.UserRepository
-import com.devpaik.library.domain.user.loanhistory.UserLoanHistoryRepository
+import com.devpaik.library.domain.user.loanhistory.UserLoanHistoryQueryDSLRepository
 import com.devpaik.library.domain.user.loanhistory.UserLoanStatus
 import com.devpaik.library.dto.book.request.BookLoanRequest
 import com.devpaik.library.dto.book.request.BookRequest
@@ -17,7 +18,9 @@ import org.springframework.transaction.annotation.Transactional
 class BookService (
     private val bookRepository: BookRepository,
     private val userRepository: UserRepository,
-    private val userLoanHistoryRepository: UserLoanHistoryRepository,
+//    private val userLoanHistoryRepository: UserLoanHistoryRepository,
+    private val bookQueryDSLRepository: BookQueryDSLRepository,
+    private val userLoanHistoryQueryDSLRepository: UserLoanHistoryQueryDSLRepository
 ) {
 
     @Transactional
@@ -29,7 +32,7 @@ class BookService (
     @Transactional
     fun loanBook(request: BookLoanRequest) {
         val book = bookRepository.findByName(request.bookName) ?: fail()
-        if (userLoanHistoryRepository.findByBookNameAndStatus(request.bookName, UserLoanStatus.LOANED) != null) {
+        if (userLoanHistoryQueryDSLRepository.findByBookNameAndStatus(request.bookName, UserLoanStatus.LOANED) != null) {
             throw IllegalArgumentException("진작 대출되어 있는 책입니다");
         }
         val user = userRepository.findByName(request.userName) ?: fail()
@@ -44,11 +47,11 @@ class BookService (
 
     @Transactional(readOnly = true)
     fun countLoanBook(): Long {
-        return userLoanHistoryRepository.countAllByStatus(UserLoanStatus.LOANED);
+        return userLoanHistoryQueryDSLRepository.countAllByStatus(UserLoanStatus.LOANED);
     }
 
     @Transactional(readOnly = true)
     fun getBookStatistics(): List<BookStatResponse> {
-        return bookRepository.getStatList();
+        return bookQueryDSLRepository.getStatList();
     }
 }
