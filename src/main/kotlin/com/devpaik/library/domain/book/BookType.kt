@@ -1,9 +1,13 @@
 package com.devpaik.library.domain.book
 
 enum class BookType {
+    SCIENCE,
+    SOCIETY,
+    ECONOMY,
     COMPUTER,
-    ELECTRONIC,
-    LITERARY,
-    OTHER,
-    FASHION,
+    LANGUAGE;
+
+    fun isTypeEquals(type: BookType): Boolean {
+        return this == type
+    }
 }

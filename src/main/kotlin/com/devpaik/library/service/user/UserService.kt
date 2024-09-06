@@ -2,8 +2,11 @@ package com.devpaik.library.service.user
 
 import com.devpaik.library.domain.user.User
 import com.devpaik.library.domain.user.UserRepository
+import com.devpaik.library.domain.user.loanhistory.UserLoanStatus
 import com.devpaik.library.dto.user.request.UserCreateRequest
 import com.devpaik.library.dto.user.request.UserUpdateRequest
+import com.devpaik.library.dto.user.response.BookHistoryResponse
+import com.devpaik.library.dto.user.response.UserLoanHistoryResponse
 import com.devpaik.library.dto.user.response.UserResponse
 import com.devpaik.library.utils.fail
 import com.devpaik.library.utils.findByIdOrThrow
@@ -37,6 +40,11 @@ class UserService (
     fun deleteUser(name: String) {
         val user = userRepository.findByName(name) ?: fail()
         userRepository.delete(user)
+    }
+
+    @Transactional(readOnly = true)
+    fun getUserLoanHistories(): List<UserLoanHistoryResponse> {
+        return userRepository.findAllByWithHistories().map(UserLoanHistoryResponse::of)
     }
 
 }

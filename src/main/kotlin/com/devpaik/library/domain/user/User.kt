@@ -24,7 +24,6 @@ class User(
     var age: Int? = age
         private set
 
-
     @OneToMany(mappedBy = "user", cascade = [CascadeType.ALL], orphanRemoval = true)
     val userLoanHistories: MutableList<UserLoanHistory>  = mutableListOf()
 

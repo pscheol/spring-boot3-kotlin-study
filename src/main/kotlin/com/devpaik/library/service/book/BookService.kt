@@ -8,6 +8,7 @@ import com.devpaik.library.domain.user.loanhistory.UserLoanStatus
 import com.devpaik.library.dto.book.request.BookLoanRequest
 import com.devpaik.library.dto.book.request.BookRequest
 import com.devpaik.library.dto.book.request.BookReturnRequest
+import com.devpaik.library.dto.book.response.BookStatResponse
 import com.devpaik.library.utils.fail
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -39,5 +40,15 @@ class BookService (
     fun returnBook(request: BookReturnRequest) {
         val user = userRepository.findByName(request.userName) ?: fail()
         user.returnBook(request.bookName)
+    }
+
+    @Transactional(readOnly = true)
+    fun countLoanBook(): Long {
+        return userLoanHistoryRepository.countAllByStatus(UserLoanStatus.LOANED);
+    }
+
+    @Transactional(readOnly = true)
+    fun getBookStatistics(): List<BookStatResponse> {
+        return bookRepository.getStatList();
     }
 }

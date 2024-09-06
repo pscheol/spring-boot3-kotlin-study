@@ -11,6 +11,7 @@ import com.devpaik.library.domain.user.loanhistory.UserLoanStatus
 import com.devpaik.library.dto.book.request.BookLoanRequest
 import com.devpaik.library.dto.book.request.BookRequest
 import com.devpaik.library.dto.book.request.BookReturnRequest
+import com.devpaik.library.dto.book.response.BookStatResponse
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.DisplayName
@@ -105,5 +106,46 @@ class BookServiceTest @Autowired constructor(
         val results = userLoanHistoryRepository.findAll();
         assertThat(results).hasSize(1);
         assertThat(results[0].status).isEqualTo(UserLoanStatus.RETURNED)
+    }
+
+    @Test
+    @DisplayName("책 대여 권수를 정상 확인한다.")
+    fun countLoanedBookTest() {
+        //given
+        val saveUser = userRepository.save(User("A", null))
+        userLoanHistoryRepository.saveAll(listOf(
+            UserLoanHistory.fixture(saveUser, "A", UserLoanStatus.LOANED),
+            UserLoanHistory.fixture(saveUser, "B", UserLoanStatus.RETURNED),
+            UserLoanHistory.fixture(saveUser, "C", UserLoanStatus.RETURNED),
+        ))
+        //when
+        val result = bookService.countLoanBook();
+
+        //then
+        assertThat(result).isEqualTo(1)
+    }
+
+    @Test
+    @DisplayName("분야 별 책 권수를 정상 확인")
+    fun getBookStatusTest() {
+        //given
+        bookRepository.saveAll(listOf(
+            Book.fixture("A", BookType.COMPUTER),
+            Book.fixture("B", BookType.COMPUTER),
+            Book.fixture("C", BookType.SCIENCE)
+        ))
+
+        //when
+        val results = bookService.getBookStatistics()
+
+        //then
+        assertThat(results).hasSize(2)
+        assertCount(results, BookType.COMPUTER, 2)
+        assertCount(results, BookType.SCIENCE, 1)
+    }
+
+    private fun assertCount(results: List<BookStatResponse>, type: BookType, count: Long) {
+        assertThat(results.first() { result -> result.type.isTypeEquals(type) }.count)
+            .isEqualTo(count)
     }
 }
